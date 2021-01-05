@@ -357,7 +357,7 @@ void partAReverse( u8 input[32], u8 output[32], matrix& confusion_reverse ) {
             // Pick first value that fits
             output[ j ] = tmp[ 0 ];
         } else {
-            output[ j ] = 0;
+            std::cout << "Not Reversible!" << std::endl;
         }
     }
 }
