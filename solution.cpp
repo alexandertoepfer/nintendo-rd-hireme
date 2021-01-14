@@ -18,10 +18,6 @@
 #include <memory>
 #include "utils.hpp"
 
-typedef unsigned char                       u8;
-typedef unsigned int                        u32;
-typedef std::vector< std::vector< int > >   matrix;
-
 u8 confusion[512] = {
 0xac,0xd1,0x25,0x94,0x1f,0xb3,0x33,0x28,0x7c,0x2b,0x17,0xbc,0xf6,0xb0,0x55,0x5d,
 0x8f,0xd2,0x48,0xd4,0xd3,0x78,0x62,0x1a,0x02,0xf2,0x01,0xc9,0xaa,0xf0,0x83,0x71,
@@ -89,188 +85,22 @@ void forward( u8 input[ 32 ], u8 output[ 32 ], u8 confusion[ 512 ], u32 diffusio
         output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
 }
 
-// Inverse confusion 0, 256 and 256, 512
-std::vector< matrix > confusion_reverse =
-{
-    {
-        {106},{26},{24,94},{89},{56},{86},{227},{195},
-        {228},{95},{188},{144},{47},{223},{70},{},
-        {88},{},{245},{42},{247},{191},{128},{10},
-        {204},{221},{23},{246},{83,113},{131},{129},{4},
-        {},{130},{240},{145},{48},{2},{112},{158},
-        {7},{253},{232},{9},{118},{132,220},{222},{176},
-        {81},{251},{200},{6,154},{140},{115},{99},{210},
-        {110},{68},{197},{216},{148},{218},{},{230},
-        {161},{162},{37},{117},{},{248},{238},{100},
-        {18},{77,209},{43},{33},{125},{67},{146},{183},
-        {189},{92},{82},{39},{149},{14},{104},{184,207},
-        {193},{75},{},{215},{59},{15},{123},{198},
-        {252},{121},{22},{40},{91},{239},{41,181},{214},
-        {196},{80},{34},{},{62},{155},{51},{244},
-        {233},{31},{32},{255},{119},{},{49},{127},
-        {21,151},{157},{174},{192},{8},{236},{226},{103},
-        {},{60},{165},{30},{142},{45},{65},{250},
-        {185},{153},{72},{205},{71},{137,171},{96},{16},
-        {186},{116},{61},{166,224},{3},{134},{76},{93},
-        {180},{213},{234},{87},{187},{122},{},{201},
-        {69},{53},{58,243},{172},{152},{50},{168},{150},
-        {90},{133},{28},{101},{0},{97},{173},{},
-        {13},{},{85},{5},{120},{219},{175},{208},
-        {135},{242},{66},{217},{11,194},{178},{229},{126},
-        {38},{44},{57},{136},{159},{164},{55,64},{249},
-        {235},{27},{105},{},{203},{170},{102},{46},
-        {73},{1},{17},{20},{19},{},{143},{52},
-        {111,237},{231},{63},{139},{114},{167},{211},{163},
-        {84},{141},{206},{107},{},{179},{78},{190},
-        {35},{36,124},{79},{202},{54},{108},{199},{169},
-        {29},{109},{25},{182},{241},{212},{12},{98,254},
-        {138},{160},{},{156},{225},{177},{74},{147}
-    },
-    {
-        {53},{151},{},{87},{255},{244},{152},{204},
-        {180},{234},{169},{227},{26},{41},{},{198},
-        {210},{38},{31},{110},{102},{},{243},{96},
-        {45},{},{184},{126},{253},{183},{142},{208},
-        {190},{88},{44},{148},{132,251},{231},{40},{15},
-        {33,209},{172},{54},{177},{0},{215},{103},{80},
-        {62},{76},{131},{64,229},{42},{146},{230},{122},
-        {238},{217},{70},{49},{128},{221},{71},{14,111},
-        {25},{175},{94,174},{18},{140},{193},{30},{105},
-        {189},{165},{160},{173},{7},{228},{16,207},{89},
-        {13},{47},{27},{246},{118},{106,154},{158},{150},
-        {157},{11,212},{32},{236},{201},{145},{52},{72},
-        {226},{57},{170},{197},{},{216},{43},{83},
-        {},{147},{164},{124},{211},{67},{20},{46},
-        {166},{149},{2},{},{219},{65},{182},{205},
-        {84},{225},{114},{23},{24},{139},{188},{},
-        {101},{112},{135},{9},{220},{79},{28},{},
-        {6},{4},{162},{},{161},{133},{168},{56},
-        {},{120},{81},{194},{115},{39},{59},{1},
-        {252},{22},{155},{48},{},{73},{239},{77},
-        {104},{69,181},{250},{99},{156},{85},{5},{121},
-        {34},{75},{78},{86},{200},{91,254},{17},{82},
-        {199},{127},{218},{60},{136},{117},{113,129},{178},
-        {185},{90},{58,202},{35},{232},{223},{245},{119},
-        {240},{29},{248},{196},{107},{167},{249},{159,224},
-        {68},{125},{12},{36,176},{187},{3},{179},{235},
-        {21,116},{61},{242},{213},{143},{19},{163},{97},
-        {100},{130},{50},{138},{63,171},{214},{195},{203},
-        {233},{},{237},{186},{153},{109},{191},{206},
-        {8},{66},{144},{10},{51},{},{98},{241},
-        {37},{123},{134},{93},{222},{55},{},{247},
-        {192},{137},{},{141},{95},{74},{92},{108}
+void forwardNoRounds( u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32] ) {
+    // part A: S-box
+    for( u8 j = 0; j < 32; j++ ) {
+        output[ j ] = confusion[ input[ j ] ];
+        input[ j ] = 0;
     }
-};
+    // part B: 32x32 Matrix
+    for( u8 j = 0; j < 32; j++ )
+        for( u8 k = 0; k < 32; k++ )
+            input[ j ] = input[ j ] ^ output[ k ] * ( ( diffusion[ j ] >> k ) & 1 );
+    // part C: Two make One
+    for( u8 i = 0; i < 16; i++ )
+        output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
+}
 
-// Part-reversal of diffusion
-std::vector< matrix > iterative_diffusion =
-{
-    {
-        {0,0,0,0,0,1,0,0,0,0,1,0,1,1,0,1,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1},
-        {0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,0,0,0,1,1,1,1,0,1,1,1,0,0,1,0,1,1},
-        {0,0,0,0,0,0,0,1,1,1,0,0,0,1,0,1,1,1,0,1,1,0,1,0,0,1,1,0,1,0,0,1},
-        {0,0,0,0,1,1,0,0,0,1,1,0,1,1,1,0,1,0,1,0,0,1,0,1,0,0,1,1,1,0,0,0},
-        {0,0,0,0,0,0,1,0,1,1,0,0,1,0,0,0,0,0,0,0,1,0,1,1,0,0,1,1,1,0,1,0},
-        {0,0,0,0,0,0,0,1,0,1,1,0,0,1,0,0,0,0,0,0,1,0,0,1,1,1,0,1,0,1,0,1},
-        {0,0,0,0,0,0,0,1,1,0,0,1,1,1,1,0,0,0,0,0,1,0,1,0,0,1,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,0,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1},
-        {0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,1,0,0,1,1,0},
-        {0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,1,0,1,1,0,0,0,0,0,0,0,0,1,0,0,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,1,0,0,1,1,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,0,0,1,0,0,1,1,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,1,0,1,1,0,0,0,1,1,1,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,0,1,0,0,0,1,1,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,0,1,0,1,0,0,1,0,1,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,1,0,0,1,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,1,1,1,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,0,1,1,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,1,1,0,0,0,0,1,1,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,1,0,1,1,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,1,0,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,1,1,1,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    },
-    {
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    }
-};
-
-// Last part of diffusion reversal
-matrix gaussian_diffusion = {
-{1,0,0,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,1,1},
-{0,1,0,0,1,0,0,1,0,0,1,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0},
-{0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,1,1,0,0},
-{0,0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,0,1,1,0,1,1,0,1,1,0,0,1,1,1,1,0},
-{0,0,0,0,1,0,1,0,1,0,0,1,1,0,0,0,0,0,0,0,1,1,1,0,0,1,1,0,1,0,1,0},
-{0,0,0,0,0,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1,1,1},
-{0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,1,1,0,1,0,0,0,0,1,1},
-{0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,0,0,0,0,0,0,1,1,0,1,1,0,0,0,0,0,1},
-{0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,1,1,0,0,1,0,0,0,0,0,0,1,0,0,0,1,1},
-{0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,1,1,0,0,1},
-{0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,1,1,0,0,1,0,1,1,1,0,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,1,0,1,0,0,1,0,1,1,0,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,1,1,1,1,0,0,1,0,1,1,1},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,1,0,1,0,1,0,0,0,1,1,0,1},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1,0,0,1,0,1,1,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1,1,0,1,0,1,1,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1,1,0,1,1,1,1,1},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,1,0,0,1,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,0,1,1,0,0,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,1,0,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,1,1,0,0,1,0,1},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0,1},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-};
-
+// input 0, output mod
 void partA( u8 input[32], u8 output[32], u8 confusion[512] ) {
     for( u8 j = 0; j < 32; ++j ) {
         // The full confusion isn't made use of:
@@ -282,80 +112,11 @@ void partA( u8 input[32], u8 output[32], u8 confusion[512] ) {
 
 void partB( u8 input[32], u8 output[32], u32 diffusion[32] ) {
     for( u8 j = 0; j < 32; ++j ) {
-        output[ j ] = input[ j ];
-        input[ j ] = 0;
+        output[ j ] = 0;
     }
     for( u8 j = 0; j < 32; j++ ) {
         for( u8 k = 0; k < 32; k++ ) {
-            input[ j ] = input[ j ] ^ output[ k ] * ( ( diffusion[ j ] >> k ) & 1 );
-        }
-    }
-}
-
-void partC( u8 input[32], u8 output[32], u8 confusion[512] ) {
-    for( u8 i = 0; i < 16; i++ ) {
-        // Second parameter encloses confusion_b's range 256 -> 512
-        output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
-    }
-}
-
-void partCNoSubstitution( u8 input[32], u8 output[32] ) {
-    for( u8 i = 0; i < 16; i++ ) {
-        output[ i ] = input[ i * 2 ] ^ input[ i * 2 + 1 ];
-    }
-}
-
-// extend functionality to return multiple strings based on multiple results from reversing confusion_part_A
-void partAReverse( u8 input[32], u8 output[32], matrix& confusion_reverse ) {
-    std::vector< int > tmp;
-    for( u8 j = 0; j < 32; j++ ) {
-        tmp = confusion_reverse[ input[ j ] ];
-        if( !tmp.empty() ) {
-            // Pick first value that fits
-            output[ j ] = tmp[ 0 ];
-        } else {
-            std::cout << utl::base16 << ( int )input[ j ] << ' ' << "at"
-            << ' ' << utl::base10 << ( int )j << ' ' << "is not reversible!" << std::endl;
-        }
-    }
-}
-
-void partBReverse( u8 input[32], std::vector< matrix >& iterative, matrix& gaussian ) {
-    size_t begin = -1;
-    for( size_t i = 0; i < iterative[ 0 ].size() - 1; i++ ) {
-        begin = i + 1;
-        std::vector< int > second = iterative[ 1 ][ i + 1 ];
-        for( size_t j = i + 1; j < iterative[ 0 ].size(); j++ ) {
-            auto applicable = std::find( second.begin(), second.end(), 1 );
-            if( ( j == begin ) && ( applicable != second.end() ) ) {
-                for( size_t k = 0; k < second.size(); k++ )
-                    input[ i ] = input[ i ] ^ ( input[ k ] * second[ k ] );
-            }
-            input[ j ] = input[ j ] ^ ( input[ i ] * iterative[ 0 ][ i ][ j ] );
-        }
-    }
-    // Apply gaussian backwards
-    for( int i = gaussian.size() - 1; i >= 0; i-- )
-		for( int j = i + 1; j < gaussian.size(); j++ )
-            input[ i ] = input[ i ] ^ ( input[ j ] * gaussian[ i ][ j ] );
-}
-
-void partCReverse( u8 input[32], u8 output[32], std::vector< matrix >& confusion_reverse ) {
-    bool next = false;
-    for( int k = 0; k < 16; ++k ) {
-        for( int i = 0; i < 256; ++i ) {
-            for( int j = 256; j < 512; ++j ) {
-                if( input[ k ] == ( confusion[ i ] ^ confusion[ j ] ) ) {
-                    std::vector< int > first = confusion_reverse[ 0 ][ confusion[ i ] ],
-                    second = confusion_reverse[ 1 ][ confusion[ j ] ];
-                    if( first.empty() || second.empty() ) continue;
-                    output[ k * 2 ] = first[ 0 ];
-                    output[ k * 2 + 1 ] = second[ 0 ];
-                    next = true;
-                    break;
-                }
-            }
-            if( next ) { next = false; break; }
+            output[ j ] = output[ j ] ^ input[ k ] * ( ( diffusion[ j ] >> k ) & 1 );
         }
     }
     for( u8 j = 0; j < 32; ++j ) {
@@ -363,11 +124,33 @@ void partCReverse( u8 input[32], u8 output[32], std::vector< matrix >& confusion
     }
 }
 
+void partC( u8 input[32], u8 output[32], u8 confusion[512] ) {
+    for( u8 i = 0; i < 16; i++ ) {
+        // Second parameter encloses confusion_2's range 256 -> 512
+        output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
+    }
+    for( u8 j = 0; j < 32; ++j ) {
+        input[ j ] = 0;
+    }
+}
+
+void forwardAsParts( u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32] ) {
+    partA( input, output, confusion );
+    partB( output, input, diffusion );
+    partC( input, output, confusion );
+}
+
+/* Playground */
+void partCNoSubstitution( u8 input[32], u8 output[32] ) {
+    for( u8 i = 0; i < 16; i++ ) {
+        output[ i ] = input[ i * 2 ] ^ input[ i * 2 + 1 ];
+    }
+}
 void solveXorPairs( u8 input[32], u8 output[32] ) {
     bool next = false;
     for( int k = 0; k < 16; ++k ) {
         for( u8 i = 0; i < 256; ++i ) {
-            for( u8 j = 256; j < 512; ++j ) {
+            for( u8 j = 0; j < 256; ++j ) {
                 if( ( ( i ^ j ) == input[ k ] ) ) {
                     std::cout << utl::base10 << "input[" << ( int )k << ']' << ' ' << '=' << ' ';
                     std::cout << utl::base16 << ( int )input[ k ] << ' ' << '=' << ' ' << utl::base16 << ( int )i;
@@ -384,102 +167,71 @@ void solveXorPairs( u8 input[32], u8 output[32] ) {
     }
 }
 
-void inverseConfusion( u8 confusion[512], size_t start, size_t end ) {
-    std::unique_ptr< std::vector< int >[] > confusion_inverse =
-    std::make_unique< std::vector< int >[] >( end - start );
-
-    for( size_t i = 0; i < ( end - start ); ++i ) {
-        for( size_t j = start; j < end; ++j )
-            if( i == confusion[ j ] )
-                confusion_inverse[ i ].push_back( j - start );
-    }
-
-    for( size_t i = 0; i < ( end - start ); ++i ) {
-        if( !( i % 8 ) ) std::cout << std::endl;
-        std::cout << utl::pasteVec( confusion_inverse[ i ] ) << ',';
-    }
-    std::cout << std::endl;
-}
-
-void inverseDiffusion( u32 diffusion[32] ) {
-    auto vectorXor = []( std::vector< int >& vector1, std::vector< int >& vector2, std::vector< int >& noop_return, int& noop ) {
-        if ( !noop ) return noop_return;
-    	std::vector< int > res;
-    	for( size_t i = 0; i < vector1.size(); ++i )
-    		res.push_back( vector1[ i ] ^ vector2[ i ] );
-    	return res;
-    };
-    auto fillMatrix = [ & ]( matrix& matrix1, unsigned int ( *set )( u32*, int, int ) ) {
-        for( size_t i = 0; i < 32; i++ ) {
-            std::vector< int > row;
-            for( size_t j = 0; j < 32; j++ ) {
-                row.push_back( set( diffusion, i, j ) );
-            }
-            matrix1.push_back( row );
+/* Reverse */
+void partAReverse( u8 input[32], u8 output[32], matrix& confusion_reverse ) {
+    std::vector< int > tmp;
+    for( u8 j = 0; j < 32; j++ ) {
+        tmp = confusion_reverse[ input[ j ] ];
+        if( !tmp.empty() ) {
+            // Honestly i can't be bother building 8923549253 strings
+            // when all we need is just to find one anyway
+            output[ j ] = tmp[ 0 ];
+        } else {
+            std::cout << utl::base16 << ( int )input[ j ] << ' ' << "at"
+            << ' ' << utl::base10 << ( int )j << ' ' << "is not reversible!" << std::endl;
         }
-    };
-    auto diffusionValue = []( u32 diffusion[ 32 ], int i, int j )
-    -> u32 {
-        return ( diffusion[ i ] >> j ) & 1;
-    };
-    auto nullValue = []( u32*, int, int ) -> u32 { return 0; };
-
-    matrix gaussian, iterative, irregular;
-    fillMatrix( gaussian, diffusionValue );
-    fillMatrix( iterative, nullValue );
-    fillMatrix( irregular, nullValue );
-
-    std::cout << utl::pasteMat( gaussian ) << std::endl;
-
-    for( size_t i = 0; i < gaussian.size() - 1; ++i ) {
-		for( size_t j = i + 1; ( j < gaussian.size() ) && ( gaussian[ i ][ i ] == 0 ); ++j ) {
-            gaussian[ i ] = vectorXor( gaussian[ i ], gaussian[ j ], gaussian[ i ], gaussian[ j ][ i ] );
-            irregular[ i + 1 ][ j ] = gaussian[ j ][ i ];
-		}
-		for( size_t j = i + 1; j < gaussian.size(); ++j ) {
-            iterative[ i ][ j ] = gaussian[ j ][ i ];
-            gaussian[ j ] = vectorXor( gaussian[ i ], gaussian[ j ], gaussian[ j ], gaussian[ j ][ i ] );
-		}
-	}
-
-    std::cout << utl::pasteMat( iterative ) << std::endl
-    << utl::pasteMat( irregular ) << std::endl
-    << utl::pasteMat( gaussian ) << std::endl;
-}
-
-void forwardNoRounds( u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32] ) {
-    // part A: S-box
-    for( u8 j = 0; j < 32; j++ ) {
-        output[ j ] = confusion[ input[ j ] ];
-        input[ j ] = 0;
     }
-
-    // part B: 32x32 Matrix
-    for( u8 j = 0; j < 32; j++ )
-        for( u8 k = 0; k < 32; k++ )
-            input[ j ] = input[ j ] ^ output[ k ] * ( ( diffusion[ j ] >> k ) & 1 );
-
-    // part C: Two make One
-    for( u8 i = 0; i < 16; i++ )
-        output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
 }
 
-void forwardAsParts( u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32] ) {
-    partA( input, output, confusion );
-    partB( output, input, diffusion );
-    partC( output, input, confusion );
-    for( u8 j = 0; j < 32; j++ ) {
-        output[ j ] = input[ j ];
+void partBReverse( u8 input[32], std::vector< matrix >& iterative, matrix& gaussian ) {
+    size_t begin = -1;
+    for( size_t i = 0; i < iterative[ 0 ].size() - 1; i++ ) {
+        begin = i + 1;
+        for( size_t j = i + 1; j < iterative[ 0 ].size(); j++ ) {
+            if( j == begin ) {
+                for( size_t k = 0; k < iterative[ 1 ][ i + 1 ].size(); k++ )
+                    input[ i ] = input[ i ] ^ ( input[ k ] * iterative[ 1 ][ i + 1 ][ k ] );
+            }
+            input[ j ] = input[ j ] ^ ( input[ i ] * iterative[ 0 ][ i ][ j ] );
+        }
+    }
+    for( int i = gaussian.size() - 1; i >= 0; i-- )
+		for( int j = i + 1; j < gaussian.size(); j++ )
+            input[ i ] = input[ i ] ^ ( input[ j ] * gaussian[ i ][ j ] );
+}
+
+void partCReverse( u8 input[32], u8 output[32], std::vector< matrix >& confusion_reverse ) {
+    int matched = 0;
+    bool next = false;
+    for( int h = 0; h < 16; ++h ) {
+        for( int i = 0; i < 32; ++i ) {
+            for( int j = 0; j < 32; ++j ) {
+                if( ( confusion[ utl::safe01[ i ] ] ^ confusion[ ( int )( utl::safe10[ j ] ) + 256 ] ) == input[ h ] ) {
+                    output[ h * 2 ] = utl::safe01[ i ];
+                    output[ h * 2 + 1 ] = utl::safe10[ j ];
+                    ++matched;
+                    next = true;
+                    break;
+                    // Next h
+                }
+            }
+            if( next ) { next = false; break; }
+        }
+    }
+    if( matched < 16 ) {
+        std::cout << "Couldn't find XOR tuples for all inputs!" << std::endl;
+    }
+    for( u8 j = 0; j < 32; ++j ) {
         input[ j ] = 0;
     }
 }
 
 void backwardAsParts( u8 input[32], u8 output[32] ) {
-    partCReverse( input, output, confusion_reverse );
+    partCReverse( input, output, utl::confusion_reverse );
     std::cout << "partCReverse: " << utl::pasteArr( output, 32 ) << std::endl;
-    partBReverse( output, iterative_diffusion, gaussian_diffusion );
+    partBReverse( output, utl::iterative_diffusion, utl::gaussian_diffusion );
     std::cout << "partBReverse: " << utl::pasteArr( output, 32 ) << std::endl;
-    partAReverse( output, input, confusion_reverse[ 0 ] );
+    partAReverse( output, input, utl::confusion_reverse[ 0 ] );
     std::cout << "partAReverse: " << utl::pasteArr( input, 32 ) << std::endl;
 }
 
@@ -493,9 +245,15 @@ void testA( u8 input[32], u8 output[32] ) {
     std::cout << "Before Input: " << utl::pasteArr( input ) << std::endl;
 
     std::cout << "partAReverse( ... )" << std::endl;
-    partAReverse( output, input, confusion_reverse[ 0 ] );
+    partAReverse( output, input, utl::confusion_reverse[ 0 ] );
 
     std::cout << "After  Input: " << utl::pasteArr( input ) << std::endl;
+
+    std::cout << "partA( ... )" << std::endl;
+    partA( input, output, confusion );
+
+    std::cout << "After  Output: " << utl::pasteArr( output ) << std::endl;
+
     std::cout << std::endl;
 }
 
@@ -506,12 +264,12 @@ void testB( u8 input[32], u8 output[32] ) {
     partB( input, output, diffusion );
 
     std::cout << "After  Input: " << utl::pasteArr( input ) << std::endl;
-    std::cout << "Before Input: " << utl::pasteArr( input ) << std::endl;
+    std::cout << "After Output: " << utl::pasteArr( output ) << std::endl;
 
     std::cout << "partBReverse( ... )" << std::endl;
-    partBReverse( input, iterative_diffusion, gaussian_diffusion );
+    partBReverse( output, utl::iterative_diffusion, utl::gaussian_diffusion );
 
-    std::cout << "After  Input: " << utl::pasteArr( input ) << std::endl;
+    std::cout << "After  Input: " << utl::pasteArr( output ) << std::endl;
     std::cout << std::endl;
 }
 
@@ -524,7 +282,7 @@ void testC( u8 input[32], u8 output[32] ) {
     std::cout << "After  Output:  " << utl::pasteArr( output, 16 ) << std::endl;
 
     std::cout << "partCReverse( ... )" << std::endl;
-    partCReverse( output, input, confusion_reverse );
+    partCReverse( output, input, utl::confusion_reverse );
 
     std::cout << "Restored Input: " << utl::pasteArr( input, 32 ) << std::endl;
     std::fill_n( output, 32, 0 );
@@ -565,26 +323,12 @@ int main() {
     u8 target[] = "Hire me!!!!!!!!", output[ 32 ];
 
     // * Stage 1 * Complete
-    /*
-    inverseConfusion( confusion, 0, 256 );
-    std::cout << std::endl;
-    inverseConfusion( confusion, 256, 512 );
-    std::cout << std::endl;
-    */
     //testA( input, output );
 
     // * Stage 2 * Complete
-    /*
-    inverseDiffusion( diffusion );
-    std::cout << std::endl;
-    */
     //testB( input, output );
 
     // * Stage 3 * Complete
-    /*
-    partCNoSubstitution( input, output );
-    solveXorPairs( output, input );
-    */
     //testC( input, output );
 
     // * Stage 4 * Complete
@@ -600,7 +344,6 @@ int main() {
     };
     partC( test, output, confusion );
     std::cout << "Test  Output:  " << utl::pasteArrChr( output, 16 ) << std::endl;
-
 
     // * Stage 5 * NEXT
     /* One full round backwards */
