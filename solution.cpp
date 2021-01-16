@@ -5,7 +5,8 @@
  *  `ooo'   `---'         "-" |_|      \____/\_/\_\/_/   \_/     \_/  \____/  \____/\_/ \|\_/ \|\____/\____/\____\\_/  \|\____\\____\
  *
  * Alexander
- * Töpfer 2020
+ * Töpfer
+ * 2020
  */
 #include <cstring>
 #include <iostream>
@@ -110,8 +111,8 @@ void partBReverse( u8 input[ 32 ], matrix& iterative, matrix& irregular, matrix&
         }
     }
     for( int i = eliminated.size() - 1; i >= 0; i-- )
-	for( size_t j = i + 1; j < eliminated.size(); j++ )
-	    input[ i ] = input[ i ] ^ ( input[ j ] * eliminated[ i ][ j ] );
+        for( size_t j = i + 1; j < eliminated.size(); j++ )
+            input[ i ] = input[ i ] ^ ( input[ j ] * eliminated[ i ][ j ] );
 }
 
 void partCReverse( u8 input[ 32 ], u8 output[ 32 ] ) {
@@ -198,7 +199,7 @@ int main() {
     /*char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r','!','!','!','\0'};
     utl::printU8Array( myout ); */
 
-    u8 inputReverse[ 16 ] = {
+    u8 inputReverse[ 32 ] = {
         0x41, 0x6c, 0x65, 0x78, 0x20, 0x54, 0x6f, 0x65,
         0x70, 0x66, 0x65, 0x72, 0x21, 0x21, 0x21, 0x00
     };
