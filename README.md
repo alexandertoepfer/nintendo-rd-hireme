@@ -14,8 +14,8 @@ My algorithm cracks [NERD HireMe](https://www.nerd.nintendo.com/files/HireMe) fo
   2. Create Reverse Lookup for the S-box
   3. Inverse the Square-Matrix with [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination)
   4. Find candidates for the Odd-Even-Merge
-  5. Evaluate the S-Box and take a deeper look why only a small portion of candidates work
-  6. Create a subset of values that are not affected by the XOR-Matrix
+  5. Evaluate the S-Box and analyse the set of working candidates
+  6. Span a subset of values that are not affected by the XOR-Matrix
   7. Alter the Reverse Lookup to guarantee staying within the subset in an arbitrary amount of reverse lookups
   8. Narrow it down to values that are also not affected by a combination of inverse matrix and reverse lookup
 
@@ -160,7 +160,7 @@ u8 missing_from_holes_simplified[] = {
 ```
 By looking at the binary representation you can see the values that land in holes all share a fixed set of bits that are either **1** or **0** **together** while from the missing set those bits are either (**0** and **1**) or (**1** and **0**) which leads us to the next step.
 
-### 6. Create a subset of values
+### 6. Span a subset of values
 Now that we know what pattern to avoid to not land on holes we can span a vector of **128 byte** which contain the values following the pattern of either (**0** and **1**) or (**1** and **0**), but for readability we keep them seperated in **2 vectors** of **64 byte** as follows
 ```c
 u8 values01[ 64 ] = {
