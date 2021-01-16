@@ -110,8 +110,8 @@ void partBReverse( u8 input[ 32 ], matrix& iterative, matrix& irregular, matrix&
         }
     }
     for( int i = eliminated.size() - 1; i >= 0; i-- )
-		for( size_t j = i + 1; j < eliminated.size(); j++ )
-            input[ i ] = input[ i ] ^ ( input[ j ] * eliminated[ i ][ j ] );
+	for( size_t j = i + 1; j < eliminated.size(); j++ )
+	    input[ i ] = input[ i ] ^ ( input[ j ] * eliminated[ i ][ j ] );
 }
 
 void partCReverse( u8 input[ 32 ], u8 output[ 32 ] ) {
