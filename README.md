@@ -53,14 +53,14 @@ for( u8 i = 0; i < 16; i++ )
 When we look at the main confusion used in **part A** we are quick to notice from the **512** values only **256** will be used here, since the maximum for any input is **0xff** so we can simply do a reverse lookup on **[0, 256)** but there is still one thing to be acknowledged, some values within the confusion are duplicated,
 ```c
 u8 confusion[512] = {
-0xac,0xd1,0x25,0x94,0x1f,0xb3,**0x33**,0x28,...
-...,0x54,0xa7,0x78,0xa4,0x89,**0x33**,0x6d,...
+	0xac,0xd1,0x25,0x94,0x1f,0xb3,**0x33**,0x28,...
+	...,0x54,0xa7,0x78,0xa4,0x89,**0x33**,0x6d,...
 };
 ```
 which means when we create a reverse lookup we can't connect each output from the confusion **1-to-1** to an input, there are multiple possibilities sometimes and it seems like we have to split into multiple different strings and try all of them whenever we have multiple possibilities because we can't guess which one was picked.
 ```c
 std::vector< int > confusion_reverse[] = {
-...,{251},{200},**{6,154}**,{140},{115},...
+	...,{251},{200},**{6,154}**,{140},{115},...
 };
 ```
 ### 3. Inverse the Square-Matrix
@@ -79,19 +79,19 @@ for( u8 j = 0; j < 32; j++ )
 If we take yet another closer look at the diffusion there is another interesting thing to notice, the numbers picked for the diffusion don't seem to be too random, if we look at the binary representation we can see that the amount of outputs XOR'd per input is fixed as well.
 ```c
 u32 diffusion[32] = {
-11110010011011001011010010000001,
-00010110101001011101110010010010,
-00111100010110111010100100100100,
-01111001101101100101001001001000,...
+	11110010011011001011010010000001,
+	00010110101001011101110010010010,
+	00111100010110111010100100100100,
+	01111001101101100101001001001000,...
 };
 ```
 You will notice that for each number it is always **15** **1s** and **17** **0s** so the amount of outputs XOR'd for each input also stays **15** which means our matrix is already fairly clear, it has to be **32x32** and it has to have **15** **1s** per row which we can easily extract from the diffusion values if we reverse the binary because of the bit-shifting.
 ```c
 matrix gaussian_grid = {
-{1,0,0,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,1,1},
-{0,1,0,0,1,0,0,1,0,0,1,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0},
-{0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,1,1,0,0},
-...
+	{1,0,0,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,1,1},
+	{0,1,0,0,1,0,0,1,0,0,1,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0},
+	{0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,1,1,0,0},
+	...
 };
 ```
 Now all that's left to do is inverse it to satisfy **M * M^(-1) = I**, which can be accomplished by multiple methods of choice, you could also make use of the equation system and plug it into Z3 but for anyone still reading this here is a small gold nugget for you to catch to thank your careful attention so far ;)
@@ -102,20 +102,21 @@ bool isXorInvolutory( int mat[ 32 ][ 32 ] ) {
 		for( int j = 0; j < 32; j++ )
 			for( int k = 0; k < 32; k++ )
 				res[ i ][ j ] ^= mat[ i ][ k ] * mat[ k ][ j ];
-	for( int i = 0; i < 32; i++ )
+	for( int i = 0; i < 32; i++ ) {
 		for( int j = 0; j < 32; j++ ) {
 			if( ( i == j ) && ( res[ i ][ j ] != 1 ) )
 				return false;
 			if( ( i != j ) && ( res[ i ][ j ] != 0 ) )
 				return false;
 		}
+	}
 	return true;
 }
 ```
 ### 4. Candidates for the Odd-Even-Merge
 ```c
 for( u8 i = 0; i < 16; i++ )
-	// This has been adjusted to address the different ranges from confusion
+    // This has been adjusted to address the different ranges from confusion
     output[ i ] = confusionA[ input[ i * 2 ] ] ^ confusionB[ input[ i * 2 + 1 ] ];
 ```
 Before we get into detail with this one let's simplify what's happening here, we won't tackle the actual problem right of the bat but get a deeper understanding what this does, so if you remember our input it has **32** characters and that doesn't change within the rounds but forward()'s output is only **16** characters and this is why.
@@ -133,7 +134,7 @@ First lets remove the confusion because we already know what it does and how we 
 So essentially for an output like "**Hire me!!!!!!!!\0**" which is **16 byte** for the first character **'H'** we have to find **2 byte** that when XOR'd have that character as a result, surprisingly that is not too hard you can find many solutions to this. So we can build many **32 byte** arrays that XOR to **16 byte** "**Hire me!!!!!!!!\0**", and loop them through the inverse of the matrix and the reverse lookup and then call it a day right?
 ```c
 std::vector< int > confusion_reverse256A[] = {
-...,{47},{223},{70},{},{88},{},{245},{42},...
+    ...,{47},{223},{70},{},{88},{},{245},{42},...
 };
 ```
 Unfortunately what will happen is a ton of arrays constructed that way end up on "holes" in the reverse lookup at some point inside the loop. These holes exist because of the repeated values, so the holes are actually values that aren't present in the original confusion because of the space taken by the repeated values.
@@ -155,7 +156,7 @@ u8 holes_simplified[] = {
 When we look at the High Byte 0x10 of the values in holes we can see there is a simple counting pattern and there doesn't seem to be anything more to it, so let's remove it and look at the remaining values which are now reduced from **16 byte** to **8 byte** because half the holes shared the Low Byte 0x01 part of the values before.
 ```c
 u8 missing_from_holes_simplified[] = {
-	0x0c, 0x0d, 0x02, 0x03, 0x06, 0x07, 0x08, 0x09
+    0x0c, 0x0d, 0x02, 0x03, 0x06, 0x07, 0x08, 0x09
 };
 ```
 By looking at the binary representation you can see the values that land in holes all share a fixed set of bits that are either **1** or **0** **together** while from the missing set those bits are either (**0** and **1**) or (**1** and **0**) which leads us to the next step.
@@ -205,10 +206,10 @@ Unfortunately confusion can still generate holes itself in subsequent reverse lo
 If we start using these now, we will notice that we can still end up on holes quite often and it didn't really help yet, this is because the confusion can still pick numbers outside of our set and diffusion can make these then "worse" by affecting other numbers. In other words **we have to narrow it down even further** and make sure confusion can't pick any numbers outside of our set, so confusion can not only never land on holes but also never land on any "bad" numbers that can lead to holes when XOR'd by diffusion.
 ```c
 std::vector< int > confusion_reverse256A_opt[] = {
-{},{},{24},{89},{56},{86},{227},{195},
-{},{},{188},{},{},{},{70},{},
-{88},{},{},{},{247},{},{},{},
-{204},{221},{23},{246},{83},{131},{},{},...
+	{},{},{24},{89},{56},{86},{227},{195},
+	{},{},{188},{},{},{},{70},{},
+	{88},{},{},{},{247},{},{},{},
+	{204},{221},{23},{246},{83},{131},{},{},...
 };
 ```
 This is where everything gets weird, because whenever we have a choice between two, we have to make sure to pick values within our set and whenever the value is outside of our set and we don't have a choice we might as well consider it a hole because we can't use it, which makes our confusion even more filled with holes then it was to begin with, which is very counterintuitive and confusing.
