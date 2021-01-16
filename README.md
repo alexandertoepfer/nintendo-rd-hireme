@@ -98,12 +98,12 @@ Now all that's left to do is inverse it to satisfy **M * M^(-1) = I**, which can
 ```c
 bool isXorInvolutory( int mat[ 32 ][ 32 ] ) {
 	int res[ 32 ][ 32 ] = { 0 };
-	for( int i = 0; i < 32; ++i )
-		for( int j = 0; j < 32; ++j )
-			for( int k = 0; k < 32; ++k )
+	for( int i = 0; i < 32; i++ )
+		for( int j = 0; j < 32; j++ )
+			for( int k = 0; k < 32; k++ )
 				res[ i ][ j ] ^= mat[ i ][ k ] * mat[ k ][ j ];
-	for( int i = 0; i < 32; ++i )
-		for( int j = 0; j < 32; ++j ) {
+	for( int i = 0; i < 32; i++ )
+		for( int j = 0; j < 32; j++ ) {
 			if( ( i == j ) && ( res[ i ][ j ] != 1 ) )
 				return false;
 			if( ( i != j ) && ( res[ i ][ j ] != 0 ) )
@@ -216,7 +216,7 @@ This is where everything gets weird, because whenever we have a choice between t
 ```c
 for( int i = 0; i < 64; i++ ) {
 	lookup = values[ i ];
-	for( int j = 0; j < 256; ++j ) {
+	for( int j = 0; j < 256; j++ ) {
 		std::vector< int > tmp = confusion_reverse[ ( int )lookup ];
 		if( tmp.empty() ||
 		  ( utl::toBin( ( u8 )tmp[ 0 ] )[ 1 ] == utl::toBin( ( u8 )tmp[ 0 ] )[ 3 ] ) )
