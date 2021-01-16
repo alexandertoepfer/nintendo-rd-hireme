@@ -17,7 +17,7 @@ My algorithm cracks the challenge for any output within 1.935 Seconds **without 
   5. Evaluate the S-Box and take a deeper look why only a small portion of candidates work
   6. Create a subset of values that are not affected by the XOR-Matrix
   7. Alter the Reverse Lookup to guarantee staying within the subset in an arbitrary amount of reverse lookups
-  8. Narrow it down to values that are also not affected by a combination of diffusion and confusion
+  8. Narrow it down to values that are also not affected by a combination of inverse matrix and reverse lookup
 
 ### 1. Seperate the algorithm into parts
 #### S-box
