@@ -140,14 +140,14 @@ std::vector< int > confusion_reverse256A[] = {
 Unfortunately what will happen is a ton of arrays constructed that way end up on "holes" in the reverse lookup at some point inside the loop. These holes exist because of the repeated values, so the holes are actually values that aren't present in the original confusion because of the space taken by the repeated values.
 
 ### 5. Evaluate the S-Box
-In order to move forward and make progress we are left with **2 choices** now, **either** we build all combinations of **2 XORs** for each byte and build tons of arrays from these to try as we have to do some permutation as well, **or** we try finding out what we can do to find a valid string that avoid holes without having to **Brute-Force** all possibilities.
+In order to move forward and make progress we are left with **2 choices** now, **either** we build all combinations of **2 XORs** for each byte and build tons of arrays from these to try as we have to do some permutation as well, **or** we try finding out what we can do to find a valid string that avoids holes without having to **Brute-Force** all possibilities.
 ```c
 u8 holes[] = {
     0x0f, 0x11, 0x20, 0x3e, 0x44, 0x5a, 0x6b, 0x75,
     0x80, 0x9e, 0xaf, 0xb1, 0xcb, 0xd5, 0xe4, 0xfa
 };
 ```
-If we take a closer look where the holes appear in confusion we can make a set of number that we basically have to avoid somehow during the entire process, so what we need to do is find a pattern here to work with to easily avoid these numbers, and thankfully so that is not too hard as we can already make adjustments to this set.
+If we take a closer look where the holes appear inside confusion we can make a set of numbers that we basically have to avoid somehow during the entire process, so what we need to do is find a pattern here to work with to easily avoid these numbers, and thankfully so that is not too hard as we can already make adjustments to this set.
 ```c
 u8 holes_simplified[] = {
     0x0f, 0x01, 0x00, 0x0e, 0x04, 0x0a, 0x0b, 0x05
@@ -162,7 +162,7 @@ u8 missing_from_holes_simplified[] = {
 By looking at the binary representation you can see the values that land in holes all share a fixed set of bits that are either **1** or **0** **together** while from the missing set those bits are either (**0** and **1**) or (**1** and **0**) which leads us to the next step.
 
 ### 6. Span a subset of values
-Now that we know what pattern to avoid to not land on holes we can span a vector of **128 byte** which contain the values following the pattern of either (**0** and **1**) or (**1** and **0**), but for readability we keep them seperated in **2 vectors** of **64 byte** as follows
+Now that we know what pattern to avoid to not land on holes we can span a vector of **128 byte** which contains the values following the pattern of either (**0** and **1**) or (**1** and **0**), but for readability we keep them seperated in **2 vectors** of **64 byte** as follows
 ```c
 u8 values01[ 64 ] = {
     0x02, 0x03, 0x06, 0x07, 0x12, 0x13, 0x16, 0x17,
