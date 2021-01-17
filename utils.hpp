@@ -412,6 +412,12 @@ namespace utl {
         std::copy( source, source + size, destination );
         arrCopy( source, args... );
     }
+    
+    void arrZero( u8 arr[ 32 ] ) {
+        for( u8 j = 0; j < 32; j++ ) {
+            arr[ j ] = 0;
+        }
+    }
 
     std::string pasteVec( std::vector< int >& vector ) {
         std::stringstream vector_string;
