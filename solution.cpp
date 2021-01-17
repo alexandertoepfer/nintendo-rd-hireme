@@ -28,22 +28,18 @@ void partA( u8 input[ 32 ], u8 output[ 32 ], u8 confusion[ 512 ] ) {
     for( u8 j = 0; j < 32; j++ ) {
         // The full confusion isn't made use of
         output[ j ] = confusion[ input[ j ] ];
-        input[ j ] = 0;
     }
+    utl::arrZero( input );
 }
 
 void partB( u8 input[ 32 ], u8 output[ 32 ], u32 diffusion[ 32 ] ) {
-    for( u8 j = 0; j < 32; j++ ) {
-        output[ j ] = 0;
-    }
+    utl::arrZero( output );
     for( u8 j = 0; j < 32; j++ ) {
         for( u8 k = 0; k < 32; k++ ) {
             output[ j ] = output[ j ] ^ input[ k ] * ( ( diffusion[ j ] >> k ) & 1 );
         }
     }
-    for( u8 j = 0; j < 32; j++ ) {
-        input[ j ] = 0;
-    }
+    utl::arrZero( input );
 }
 
 void partC( u8 input[ 32 ], u8 output[ 32 ], u8 confusion[ 512 ] ) {
@@ -51,9 +47,7 @@ void partC( u8 input[ 32 ], u8 output[ 32 ], u8 confusion[ 512 ] ) {
         // Second parameter encloses range 256, 512
         output[ i ] = confusion[ input[ i * 2 ] ] ^ confusion[ input[ i * 2 + 1 ] + 256 ];
     }
-    for( u8 j = 0; j < 32; j++ ) {
-        input[ j ] = 0;
-    }
+    utl::arrZero( input );
 }
 
 void forwardAsParts( u8 input[ 32 ], u8 output[ 32 ], u8 confusion[ 512 ], u32 diffusion[ 32 ] ) {
@@ -135,9 +129,7 @@ void partCReverse( u8 input[ 32 ], u8 output[ 32 ] ) {
     if( matched < 16 ) {
         std::cout << "Couldn't find XOR tuples for all inputs!" << std::endl;
     }
-    for( u8 j = 0; j < 32; j++ ) {
-        input[ j ] = 0;
-    }
+    utl::arrZero( input );
 }
 
 void backwardAsParts( u8 input[ 32 ], u8 output[ 32 ] ) {
@@ -157,10 +149,8 @@ void backward( u8 input[ 32 ], u8 output[ 32 ] ) {
         partAReverse( output, input );
         std::cout << utl::isWithin( output, utl::safe256A_0110, 16 )
         << " partAReverse: " << utl::pasteArr( input, 32 ) << std::endl;
-        for( int i = 0; i < 32; i++ ) {
-            output[ i ] = input[ i ];
-            input[ i ] = 0;
-        }
+        utl::arrCopy( input, output );
+        utl::arrZero( input );
     }
 }
 
