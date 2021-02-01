@@ -81,7 +81,7 @@ void partAReverse( u8 input[ 32 ], u8 output[ 32 ] ) {
     for( u8 j = 0; j < 32; j++ ) {
         tmp = utl::confusion_reverse256A_opt[ input[ j ] ];
         if( !tmp.empty() ) {
-            // Honestly i can't be bother building 8923549253 strings
+            // Honestly i can't be bothered building 8923549253 strings
             // when all we need is just to find one anyway
             output[ j ] = tmp[ 0 ];
         } else {
