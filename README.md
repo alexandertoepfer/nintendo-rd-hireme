@@ -82,7 +82,8 @@ u32 diffusion[32] = {
 	11110010011011001011010010000001,
 	00010110101001011101110010010010,
 	00111100010110111010100100100100,
-	01111001101101100101001001001000,...
+	01111001101101100101001001001000,
+	...
 };
 ```
 You will notice that for each number it is always **15** **1s** and **17** **0s** so the amount of outputs XOR'd for each input also stays **15** which means our matrix is already fairly clear, it has to be **32x32** and it has to have **15** **1s** per row which we can easily extract from the diffusion values if we reverse the binary because of the bit-shifting.
