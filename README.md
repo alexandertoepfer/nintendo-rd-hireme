@@ -96,9 +96,10 @@ matrix gaussian_grid = {
 ```
 ![](CodeCogsEqnMat_1.png)
 
+Now all that's left to do is inverse it to satisfy **M * M^(-1) = I**, which can be accomplished by multiple methods of choice, you could also make use of the equation system and plug it into Z3 but for anyone still reading this here is a small gold nugget for you to catch to thank your careful attention so far ;)
+
 ![](CodeCogsEqnMat_2.png)
 
-Now all that's left to do is inverse it to satisfy **M * M^(-1) = I**, which can be accomplished by multiple methods of choice, you could also make use of the equation system and plug it into Z3 but for anyone still reading this here is a small gold nugget for you to catch to thank your careful attention so far ;)
 ```c
 bool isXorInvolutory( int mat[ 32 ][ 32 ] ) {
 	int res[ 32 ][ 32 ] = { 0 };
