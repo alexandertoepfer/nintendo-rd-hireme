@@ -119,7 +119,7 @@ void partCReverse(u8 input[32], u8 output[32])
         {
             for(int j = 0; j < 16; j++)
             {
-                int candidate_even = utl::safe256A_0110[i], candidate_odd = utl::safe256A_0110[j];
+                int candidate_even = utl::safe256AComplete[i], candidate_odd = utl::safe256AComplete[j];
                 if(input[h] == (utl::confusion[candidate_even] ^ utl::confusion[candidate_odd + 256]))
                 {
                     output[h * 2] = candidate_even;
@@ -152,15 +152,15 @@ void backwardOneRound(u8 input[32], u8 output[32])
 void backward(u8 input[32], u8 output[32])
 {
     partCReverse(input, output);
-    std::cout << utl::isWithin(output, utl::safe256A_0110, 16)
+    std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
     << " partCReverse: " << utl::pasteArr(output, 32) << std::endl;
     for(int j = 0; j < 256; j++)
     {
         partBReverse(output, utl::gaussian_iterative, utl::gaussian_irregular, utl::gaussian_eliminated);
-        std::cout << utl::isWithin(output, utl::safe256A_0110, 16)
+        std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
         << " partBReverse: " << utl::pasteArr(output, 32) << std::endl;
         partAReverse(output, input);
-        std::cout << utl::isWithin(output, utl::safe256A_0110, 16)
+        std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
         << " partAReverse: " << utl::pasteArr(input, 32) << std::endl;
         utl::arrCopy(input, output);
         utl::arrZero(input);
