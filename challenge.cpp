@@ -71,7 +71,8 @@ void forward(u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32])
         output[i] = confusion[input[i * 2]] ^ confusion[input[i * 2 + 1] + 256];
 }
 
-int main() {
+int main()
+{
     u8 target[16] = "Hire me!!!!!!!!\0", output[32];
     forward(input, output, confusion, diffusion);
     std::cout << output << std::endl;
