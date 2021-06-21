@@ -71,7 +71,7 @@ You might wonder what this has to do with matrices at first but when you take a 
 ```c
 for(u8 j = 0; j < 32; j++)
 	for(u8 k = 0; k < 32; k++)
-		input[j] = input[j] ^ output[k] * ((diffusion[j] >> k ) & 1);
+		input[j] = input[j] ^ output[k] * ((diffusion[j] >> k) & 1);
 ```
 Since the diffusion is fixed the outputs getting XOR'd for a specific input within the loop always stay the same, so all we need to do is construct a simple collection of **1s** and **0s** to decide which outputs get XOR'd.
 ```c
