@@ -202,13 +202,13 @@ int main()
 
     // * Stage 6 * Complete
     /* All rounds backwards */
-    /*char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r','!','!','!','\0'};
-    utl::printU8Array(myout); */
+    char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r',' ',':',')','\0'};
+    utl::printU8Array(myout);
 
-    u8 inputReverse[32] =
+    u8 inputReverse[16] =
     {
         0x41, 0x6c, 0x65, 0x78, 0x20, 0x54, 0x6f, 0x65,
-        0x70, 0x66, 0x65, 0x72, 0x21, 0x21, 0x21, 0x00
+        0x70, 0x66, 0x65, 0x72, 0x20, 0x3a, 0x29, 0x00, 
     };
     u8 outputReverse[32];
     backward(inputReverse, outputReverse);
