@@ -170,38 +170,40 @@ void backward(u8 input[32], u8 output[32])
 int main()
 {
     // * Stage 1 * Complete
-    //testA( input, output );
+    //testA(input, output);
 
     // * Stage 2 * Complete
-    //testB( input, output );
+    //testB(input, output);
 
     // * Stage 3 * Complete
-    //testC( input, output );
+    //testC(input, output);
 
     // * Stage 4 * Complete
     /* Verify Integrity of forward */
-    //testIntegrityForward( input );
+    //testIntegrityForward(input);
 
     // * Stage 5 * Complete
     /* One round backwards */
-    /*u8 outputForward[] = {
+    /*u8 outputForward[] =
+    {
         0x72, 0x6e, 0x28, 0x70, 0x58, 0x60, 0xa8, 0x81,
         0x14, 0x50, 0x23, 0xe7, 0xe0, 0xbd, 0x07, 0x41
     };
-    testBackward( outputForward );
+    testBackward(outputForward);
     std::cout << std::endl;
-    u8 inputForward[] = {
+    u8 inputForward[] =
+    {
         0x37, 0xaa, 0x64, 0x83, 0xbe, 0xb4, 0x2a, 0x87,
         0x31, 0x4d, 0x25, 0x7a, 0xd2, 0x2f, 0xaf, 0x3b,
         0x8f, 0x85, 0x41, 0x6e, 0x16, 0xaa, 0x41, 0xe4,
         0x80, 0x6c, 0xe3, 0xd5, 0x16, 0x07, 0xac, 0x1b
     };
-    testForward( inputForward );*/
+    testForward(inputForward);*/
 
     // * Stage 6 * Complete
     /* All rounds backwards */
     /*char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r','!','!','!','\0'};
-    utl::printU8Array( myout ); */
+    utl::printU8Array(myout); */
 
     u8 inputReverse[32] =
     {
@@ -210,5 +212,6 @@ int main()
     };
     u8 outputReverse[32];
     backward(inputReverse, outputReverse);
+    // Use output in challenge to create "Alex Toepfer!!!" =>
     return 0;
 }
