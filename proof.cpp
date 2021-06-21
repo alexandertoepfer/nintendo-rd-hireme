@@ -73,9 +73,8 @@ void forward(u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32])
 
 int main()
 {
-    u8 output[32];
+    u8 target[16] = "Alex Toepfer!!!", output[32];
     forward(input, output, confusion, diffusion);
-    // Prints "Alex Toepfer!!!\0"
     std::cout << output << std::endl;
-    return 0;
+    return memcmp(output, target, 16); // => contact jobs(at)nerd.nintendo.com
 }
