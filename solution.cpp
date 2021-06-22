@@ -83,6 +83,7 @@ void partAReverse(u8 input[32], u8 output[32])
             // when all we need is just to find one anyway
             output[j] = tmp[0];
         else
+            // Should never reach this code
             std::cout << utl::base16 << (int) input[j] << ' ' << "at"
             << ' ' << utl::base10 << (int) j << ' ' << "is not reversible!" << std::endl;
     }
