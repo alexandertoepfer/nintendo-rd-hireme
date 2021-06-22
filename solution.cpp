@@ -135,6 +135,7 @@ void partCReverse(u8 input[32], u8 output[32])
         }
     if(matched < 16)
     {
+        // Should never reach this code
         std::cout << "Couldn't find XOR tuples for all inputs!" << std::endl;
     }
     utl::arrZero(input);
