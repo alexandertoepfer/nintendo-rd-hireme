@@ -17,12 +17,6 @@
 #include <memory>
 #include "utils.hpp"
 
-u8 input[32] =
-{
-    0x66,0xd5,0x4e,0x28,0x5f,0xff,0x6b,0x53,0xac,0x3b,0x34,0x14,0xb5,0x3c,0xb2,0xc6,
-    0xa4,0x85,0x1e,0x0d,0x86,0xc7,0x4f,0xba,0x75,0x5e,0xcb,0xc3,0x6e,0x48,0x79,0x8f
-};
-
 void partA(u8 input[32], u8 output[32], u8 confusion[512])
 {
     for(u8 j = 0; j < 32; j++)
@@ -55,7 +49,7 @@ void forwardOneRound(u8 input[32], u8 output[32], u8 confusion[512], u32 diffusi
     partC(input, output, confusion);
 }
 
-void forward(u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32])
+void forwardVerbose(u8 input[32], u8 output[32], u8 confusion[512] = utl::confusion, u32 diffusion[32] = utl::diffusion)
 {
     for(u32 i = 0; i < 256; i++)
     {
@@ -65,14 +59,17 @@ void forward(u8 input[32], u8 output[32], u8 confusion[512], u32 diffusion[32])
             output[j] = utl::confusion[input[j]];
             input[j] = 0;
         }
+        std::cout << "partA: " << utl::pasteArr(output, 32) << std::endl;
         // Part B: 32x32 Matrix
         for(u8 j = 0; j < 32; j++)
             for(u8 k = 0; k < 32; k++)
                 input[j] = input[j] ^ output[k] * ((utl::diffusion[j] >> k) & 1);
+        std::cout << "partB: " << utl::pasteArr(input, 32) << std::endl;
     }
     // Part C: Odd-Even-Merge
     for(u8 i = 0; i < 16; i++)
         output[i] = utl::confusion[input[i * 2]] ^ utl::confusion[input[i * 2 + 1] + 256];
+    std::cout << "partC: " << utl::pasteArr(output, 16) << std::endl << std::endl;
 }
 
 void partAReverse(u8 input[32], u8 output[32])
@@ -149,22 +146,20 @@ void backwardOneRound(u8 input[32], u8 output[32])
     partAReverse(output, input);
 }
 
-void backward(u8 input[32], u8 output[32])
+void backwardVerbose(u8 input[32], u8 output[32])
 {
     partCReverse(input, output);
-    std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
-    << " partCReverse: " << utl::pasteArr(output, 32) << std::endl;
+    std::cout << "partC^-1: " << utl::pasteArr(output, 32) << ' ' << '(' << utl::isWithin(output, utl::safe256AComplete, 16) << ')' << std::endl;
     for(int j = 0; j < 256; j++)
     {
         partBReverse(output, utl::gaussian_iterative, utl::gaussian_irregular, utl::gaussian_eliminated);
-        std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
-        << " partBReverse: " << utl::pasteArr(output, 32) << std::endl;
+        std::cout << "partB^-1: " << utl::pasteArr(output, 32) << ' ' << '(' << utl::isWithin(output, utl::safe256AComplete, 16) << ')' << std::endl;
         partAReverse(output, input);
-        std::cout << utl::isWithin(output, utl::safe256AComplete, 16)
-        << " partAReverse: " << utl::pasteArr(input, 32) << std::endl;
+        std::cout << "partA^-1: " << utl::pasteArr(input, 32) << ' ' << '(' << utl::isWithin(input, utl::safe256AComplete, 16) << ')' << std::endl;
         utl::arrCopy(input, output);
         utl::arrZero(input);
     }
+    std::cout << std::endl;
 }
 
 int main()
@@ -202,16 +197,25 @@ int main()
 
     // * Stage 6 * Complete
     /* All rounds backwards */
-    char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r',' ',':',')','\0'};
-    utl::printU8Array(myout);
+    /*char myout[] = {'A','l','e','x',' ','T','o','e','p','f','e','r',' ',':',')','\0'};
+    utl::printU8Array(myout);*/
 
-    u8 inputReverse[16] =
+    u8 outputBackward[32] =
     {
         0x41, 0x6c, 0x65, 0x78, 0x20, 0x54, 0x6f, 0x65,
         0x70, 0x66, 0x65, 0x72, 0x20, 0x3a, 0x29, 0x00, 
     };
-    u8 outputReverse[32];
-    backward(inputReverse, outputReverse);
+    u8 inputBackward[32];
+    backwardVerbose(outputBackward, inputBackward);
+    
+    u8 inputForward[32] =
+    {
+        0x07, 0xf2, 0x7d, 0x07, 0x88, 0xc3, 0xec, 0x88, 0x07, 0x4c, 0xc3, 0x4c, 0x19, 0x4c, 0xc3, 0xf2,
+        0xec, 0xb9, 0xb9, 0x88, 0xf2, 0x28, 0x52, 0x88, 0xb9, 0xc3, 0xa7, 0x63, 0x7d, 0x63, 0xc3, 0x63
+    };
+    u8 outputForward[32];
+    forwardVerbose(inputForward, outputForward);
+    
     // Use output in challenge to create "Alex Toepfer!!!" =>
     return 0;
 }
