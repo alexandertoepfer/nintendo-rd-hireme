@@ -239,7 +239,8 @@ This is where everything gets weird, because whenever we have a choice between t
 for(int i = 0; i < 64; i++)
 {
     lookup = values[i];
-    for(int j = 0; j < 256; j++) {
+    for(int j = 0; j < 256; j++)
+    {
         std::vector<int> tmp = confusion_reverse[(int) lookup];
         if(tmp.empty() || (utl::toBin((u8) tmp[0])[1] == utl::toBin((u8) tmp[0])[3]))
             break;
