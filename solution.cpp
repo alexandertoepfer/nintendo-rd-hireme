@@ -1,12 +1,3 @@
-/*  ooo,    .---.                       ____  ____ ___  _ ____  _____  ____    ____  _     ____  _     _     _____ _      _____ _____
- *  o`  o   /    |\________________    /   _\/  __\\  \///  __\/__ __\/  _ \  /   _\/ \ /|/  _ \/ \   / \   /  __// \  /|/  __//  __/
- *  o`   'oooo()  | ________   _   _)  |  /  |  \/| \  / |  \/|  / \  | / \|  |  /  | |_||| / \|| |   | |   |  \  | |\ ||| |  _|  \
- *  `oo   o` \    |/        | | | |    |  \__|    / / /  |  __/  | |  | \_/|  |  \_ | | ||| |-||| |_/\| |_/\|  /_ | | \||| |_//|  /_
- *  `ooo'   `---'         "-" |_| hjw  \____/\_/\_\/_/   \_/     \_/  \____/  \____/\_/ \|\_/ \|\____/\____/\____\\_/  \|\____\\____\
- * Alexander
- * Töpfer
- * 2020
- */
 #include <cstring>
 #include <iostream>
 #include <iomanip>
@@ -15,7 +6,24 @@
 #include <algorithm>
 #include <sstream>
 #include <memory>
+
 #include "utils.hpp"
+
+/* 
+ * Nintendo Research and Development Cryptography Challenge
+ * 
+ *    ooo,    .---.                       
+ *   o`  o   /    |\________________   
+ *  o`   'oooo()  | ________   _   _) 
+ *  `oo   o` \    |/        | | | |   
+ *    `ooo'   `---'         "-" |_| hjw 
+ * Step by step reversal of their forward hash function,
+ * this solution does not require brute force to solve
+ * the last step.
+ * 
+ * Author: Alexander Töpfer (https://github.com/alexandertoepfer)
+ * Artwork by (https://www.asciiart.eu/)
+ */
 
 void partA(u8 input[32], u8 output[32], u8 confusion[512])
 {
