@@ -4,7 +4,7 @@
 
 
 
-# Nintendo European Research & Development - HireMe.c
+# Nintendo European Research & Development - hireme.c Challenge
 
 >“Crypto is like catnip for programmers. It’s hard to keep us away from it, because it’s challenging and fun to play with. And programmers respond very badly to the insinuation that they’re not clever enough to do something.”—Maciej Cegłowski
 
