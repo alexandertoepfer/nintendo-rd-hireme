@@ -3,21 +3,46 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
+
 #include "utils.hpp"
 
 using namespace utl;
 
-bool is2Pow1AndNot2Pow3(int val)
-{
+/*
+ * Nintendo Research and Development Cryptography Challenge
+ *
+ *    ooo,    .---.
+ *   o`  o   /    |\________________
+ *  o`   'oooo()  | ________   _   _)
+ *  `oo   o` \    |/        | | | |
+ *    `ooo'   `---'         "-" |_| hjw
+ * Step by step reversal of their forward hash function,
+ * this solution does not require brute force to solve
+ * the last step, making calculations of solutions instant.
+ *
+ * Author: Alexander Töpfer (https://github.com/alexandertoepfer)
+ * Artwork by (https://www.asciiart.eu/)
+ */
+
+ /**
+  * Functions to test whether value is in binary field.
+  *
+  * @param val The value to be tested.
+  * @return True if 2^1 || 2^3 of val is 1.
+  */
+bool is2Pow1AndNot2Pow3(int val) {
     return (toBin((u8) val)[1] && !toBin((u8) val)[3]);
 }
-bool isNot2Pow1And2Pow3(int val)
-{
+bool isNot2Pow1And2Pow3(int val) {
     return (!toBin((u8) val)[1] && toBin((u8) val)[3]);
 }
 
-void printNotReverseable()
-{
+/**
+ * Functions for documentation to understand the binary field,
+ * which needs to be spanned t oavoid bad confusion look-ups.
+ *
+ */
+void printNotReversible() {
     printBin(missing256AB[0], missing256AB[1], missing256AB[2], missing256AB[3],
              missing256AB[4], missing256AB[5], missing256AB[6], missing256AB[7],
              missing256AB[8], missing256AB[9], missing256AB[10], missing256AB[11],
@@ -28,9 +53,7 @@ void printNotReverseable()
         << toBin(missing256AB[i])[3] << '0'
         << toBin(missing256AB[i])[1] << '0' << std::endl;
 }
-
-void printAvoidDiffusion()
-{
+void printAvoidDiffusion() {
     // Odd number of XOR operations 3
     std::cout << "0x02:" << ' ' << pasteArr(toBin((u8) 0x02))
     << ' ' << "OK number" << std::endl;
@@ -45,14 +68,17 @@ void printAvoidDiffusion()
     std::cout << "          ^ ^ " << std::endl;
 }
 
-void printValues(bool (*isSafe)(int))
-{
+/**
+ * Print all possible values under 1 byte obeying to condition.
+ *
+ * @param isSafe The condition which needs to be passed.
+ */
+void printValues(bool (*isSafe)(int)) {
     std::vector<u8> safe;
     for(int i = 0; i < 256; i++)
       if(isSafe(i))
         safe.push_back((u8) i);
-    for(size_t i = 0; i < safe.size(); i++)
-    {
+    for(size_t i = 0; i < safe.size(); i++) {
         if(!(i % 8) && i > 0)
             std::cout << std::endl;
         std::cout << "0x" << base16 << (int) safe[i] << ',' << ' ';
@@ -61,16 +87,13 @@ void printValues(bool (*isSafe)(int))
     std::cout << std::endl;
 }
 
-void printSafeReverseLookup(u8 values[64], std::vector<int>* confusion_reverse, bool enclose = false)
-{
+void printSafeReverseLookup(u8 values[64], std::vector<int>* confusion_reverse, bool enclose = false) {
     u8 lookup;
     bool success = false;
     int k = 0;
-    for(int i = 0; i < 64; i++)
-    {
+    for(int i = 0; i < 64; i++) {
         lookup = values[i];
-        for(int j = 0; j < 256; j++)
-        {
+        for(int j = 0; j < 256; j++) {
             std::vector<int> tmp = confusion_reverse[(int) lookup];
             if(tmp.empty() || (enclose &&
               (toBin((u8) tmp[0])[1] == toBin((u8) tmp[0])[3])))
@@ -79,8 +102,7 @@ void printSafeReverseLookup(u8 values[64], std::vector<int>* confusion_reverse, 
             if(j == 255)
                 success = true;
         }
-        if(success)
-        {
+        if(success) {
             if(!(k % 8))
                 std::cout << std::endl;
             std::cout << "0x" << base16 << (int) values[i] << ',' << ' ';
@@ -91,18 +113,13 @@ void printSafeReverseLookup(u8 values[64], std::vector<int>* confusion_reverse, 
     std::cout << std::endl;
     std::cout << "Count: " << base10 << k << std::endl;
 }
-
-void printRestoreable(u8 input[16], u8 set1[], int size1, u8 set2[] = safe256AComplete, int size2 = 16)
-{
+void printRestoreable(u8 input[16], u8 set1[], int size1, u8 set2[] = safe256AComplete, int size2 = 16) {
     int matched = 0;
     bool next = false;
-    for(int h = 0; h < 16; h++)
-        for(int i = 0; i < size1; i++)
-        {
-            for(int j = 0; j < size2; j++)
-            {
-                if(input[h] == (confusion[(int) set1[i]] ^ confusion[(int) (set2[j]) + 256]))
-                {
+    for(int h = 0; h < 16; h++) {
+        for(int i = 0; i < size1; i++) {
+            for(int j = 0; j < size2; j++) {
+                if(input[h] == (confusion[(int) set1[i]] ^ confusion[(int) (set2[j]) + 256])) {
                     if(!(h % 4) && h > 0)
                         std::cout << std::endl;
                     std::cout << "0x" << base16 << (int) set1[i] << ',' << ' '
@@ -112,19 +129,19 @@ void printRestoreable(u8 input[16], u8 set1[], int size1, u8 set2[] = safe256ACo
                     break;
                 }
             }
-            if(next)
-            {
+            if(next) {
                 next = false;
                 break;
             }
         }
+    }
     std::cout << std::endl << "Characters restored: " << base10 << matched << std::endl;
 }
 
 int main()
 {
     // Values to avoid in the entire process
-    /*printNotReverseable();
+    /*printNotReversible();
     std::cout << std::endl;*/
 
     // Accomplish guaranteed lookup-able values after matrix
@@ -157,19 +174,17 @@ int main()
 
     // Test whether we can restore valid XORs values to be picked
     // "Reverse me fast" as test
-    u8 restoreme[] =
-    {
+    u8 restore_me[] = {
         0x52, 0x65, 0x76, 0x65, 0x72, 0x73, 0x65, 0x20,
         0x6d, 0x65, 0x20, 0x66, 0x61, 0x73, 0x74, 0x00
     };
-    printRestoreable(restoreme, safe256AComplete, 16);
-    u8 testme[] =
-    {
+    printRestoreable(restore_me, safe256AComplete, 16);
+    u8 test_me[] = {
         0x28, 0x4c, 0xa7, 0xb9, 0x63, 0x19, 0xa7, 0xb9,
         0xa7, 0x52, 0x07, 0xec, 0xa7, 0xb9, 0x19, 0xf2,
         0x63, 0xec, 0xa7, 0xb9, 0x19, 0xf2, 0x7d, 0x36,
         0x63, 0x96, 0x07, 0xec, 0x52, 0x28, 0x7d, 0x07
     };
-    std::cout << "All characters in subset: " << std::boolalpha << isWithin(testme, safe256AComplete, 16) << std::endl;
+    std::cout << "All characters of test in subset: " << std::boolalpha << isWithin(test_me, safe256AComplete, 16) << std::endl;
     return 0;
 }

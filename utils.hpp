@@ -14,10 +14,8 @@ typedef unsigned char u8;
 typedef unsigned int u32;
 typedef std::vector<std::vector<int>> matrix;
 
-namespace utl
-{
-    u8 confusion[512] =
-    {
+namespace utl {
+    u8 confusion[512] = {
         0xac,0xd1,0x25,0x94,0x1f,0xb3,0x33,0x28,0x7c,0x2b,0x17,0xbc,0xf6,0xb0,0x55,0x5d,
         0x8f,0xd2,0x48,0xd4,0xd3,0x78,0x62,0x1a,0x02,0xf2,0x01,0xc9,0xaa,0xf0,0x83,0x71,
         0x72,0x4b,0x6a,0xe8,0xe9,0x42,0xc0,0x53,0x63,0x66,0x13,0x4a,0xc1,0x85,0xcf,0x0c,
@@ -51,17 +49,15 @@ namespace utl
         0xc7,0x79,0x60,0x0b,0x4d,0x33,0x36,0x25,0xbc,0xe0,0x09,0xcf,0x5b,0xe2,0x38,0x9e,
         0xc0,0xef,0xd2,0x16,0x05,0xbe,0x53,0xf7,0xc2,0xc6,0xa2,0x24,0x98,0x1c,0xad,0x04
     };
-    
-    u32 diffusion[32] =
-    {
+
+    u32 diffusion[32] = {
         0xf26cb481,0x16a5dc92,0x3c5ba924,0x79b65248,0x2fc64b18,0x615acd29,0xc3b59a42,0x976b2584,
         0x6cf281b4,0xa51692dc,0x5b3c24a9,0xb6794852,0xc62f184b,0x5a6129cd,0xb5c3429a,0x6b978425,
         0xb481f26c,0xdc9216a5,0xa9243c5b,0x524879b6,0x4b182fc6,0xcd29615a,0x9a42c3b5,0x2584976b,
         0x81b46cf2,0x92dca516,0x24a95b3c,0x4852b679,0x184bc62f,0x29cd5a61,0x429ab5c3,0x84256b97
     };
 
-    std::vector<int> confusion_reverse256A[] =
-    {
+    std::vector<int> confusion_reverse256A[] = {
         {106},{26},{24,94},{89},{56},{86},{227},{195},
         {228},{95},{188},{144},{47},{223},{70},{},
         {88},{},{245},{42},{247},{191},{128},{10},
@@ -96,8 +92,7 @@ namespace utl
         {138},{160},{},{156},{225},{177},{74},{147}
     };
 
-    std::vector<int> confusion_reverse256B[] =
-    {
+    std::vector<int> confusion_reverse256B[] = {
         {53},{151},{},{87},{255},{244},{152},{204},
         {180},{234},{169},{227},{26},{41},{},{198},
         {210},{38},{31},{110},{102},{},{243},{96},
@@ -132,8 +127,7 @@ namespace utl
         {192},{137},{},{141},{95},{74},{92},{108}
     };
 
-    std::vector<int> confusion_reverse256A_opt[] =
-    {
+    std::vector<int> confusion_reverse256A_opt[] = {
         {},{},{24},{89},{56},{86},{227},{195},
         {},{},{188},{},{},{},{70},{},
         {88},{},{},{},{247},{},{},{},
@@ -168,8 +162,7 @@ namespace utl
         {},{},{},{156},{},{},{},{147}
     };
 
-    std::vector<int> confusion_reverse256B_opt[] =
-    {
+    std::vector<int> confusion_reverse256B_opt[] = {
         {},{151},{},{87},{},{},{152},{204},
         {},{},{169},{227},{},{41},{},{198},
         {210},{38},{},{},{102},{},{243},{},
@@ -204,8 +197,7 @@ namespace utl
         {},{137},{},{141},{},{},{92},{108}
     };
 
-    matrix gaussian_grid =
-    {
+    matrix gaussian_grid = {
         {1,0,0,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,1,1},
         {0,1,0,0,1,0,0,1,0,0,1,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0},
         {0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,1,1,0,0},
@@ -240,8 +232,7 @@ namespace utl
         {1,1,1,0,1,0,0,1,1,1,0,1,0,1,1,0,1,0,1,0,0,1,0,0,0,0,1,0,0,0,0,1}
     };
 
-    matrix gaussian_iterative =
-    {
+    matrix gaussian_iterative = {
         {0,0,0,0,0,1,0,0,0,0,1,0,1,1,0,1,0,1,1,0,0,0,1,1,0,0,0,1,1,1,1,1},
         {0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,0,0,0,1,1,1,1,0,1,1,1,0,0,1,0,1,1},
         {0,0,0,0,0,0,0,1,1,1,0,0,0,1,0,1,1,1,0,1,1,0,1,0,0,1,1,0,1,0,0,1},
@@ -276,8 +267,7 @@ namespace utl
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
 
-    matrix gaussian_irregular =
-    {
+    matrix gaussian_irregular = {
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -312,8 +302,7 @@ namespace utl
         {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
     };
 
-    matrix gaussian_eliminated =
-    {
+    matrix gaussian_eliminated = {
         {1,0,0,0,0,0,0,1,0,0,1,0,1,1,0,1,0,0,1,1,0,1,1,0,0,1,0,0,1,1,1,1},
         {0,1,0,0,1,0,0,1,0,0,1,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,0,1,0,0,0},
         {0,0,1,0,0,1,0,0,1,0,0,1,0,1,0,1,1,1,0,1,1,0,1,0,0,0,1,1,1,1,0,0},
@@ -350,8 +339,7 @@ namespace utl
 
     // Binary field spanning all 128 values which
     // are expected to not be affected by diffusion
-    u8 v2Pow1AndNot2Pow3[64] =
-    {
+    u8 v2Pow1AndNot2Pow3[64] = {
         0x02, 0x03, 0x06, 0x07, 0x12, 0x13, 0x16, 0x17,
         0x22, 0x23, 0x26, 0x27, 0x32, 0x33, 0x36, 0x37,
         0x42, 0x43, 0x46, 0x47, 0x52, 0x53, 0x56, 0x57,
@@ -362,8 +350,7 @@ namespace utl
         0xe2, 0xe3, 0xe6, 0xe7, 0xf2, 0xf3, 0xf6, 0xf7
     };
 
-    u8 vNot2Pow1And2Pow3[64] =
-    {
+    u8 vNot2Pow1And2Pow3[64] = {
         0x08, 0x09, 0x0c, 0x0d, 0x18, 0x19, 0x1c, 0x1d,
         0x28, 0x29, 0x2c, 0x2d, 0x38, 0x39, 0x3c, 0x3d,
         0x48, 0x49, 0x4c, 0x4d, 0x58, 0x59, 0x5c, 0x5d,
@@ -373,79 +360,72 @@ namespace utl
         0xc8, 0xc9, 0xcc, 0xcd, 0xd8, 0xd9, 0xdc, 0xdd,
         0xe8, 0xe9, 0xec, 0xed, 0xf8, 0xf9, 0xfc, 0xfd
     };
-    
+
     // Simplified version of missing values
     // from the confusion box 0,256
-    u8 missing256AB[16] =
-    {
+    u8 missing256AB[16] = {
         0x0f, 0x01, 0x00, 0x0e, 0x04, 0x0a, 0x0b, 0x05,
         0x00, 0x0e, 0x0f, 0x01, 0x0b, 0x05, 0x04, 0x0a
     };
-    
-    u8 safe256A2Pow1AndNot2Pow3[] =
-    {
+
+    u8 safe256A2Pow1AndNot2Pow3[] = {
         0x07, 0x36, 0x52, 0x63, 0x96, 0xa7, 0xc3, 0xf2
     };
 
-    u8 safe256ANot2Pow1And2Pow3[] =
-    {
+    u8 safe256ANot2Pow1And2Pow3[] = {
         0x19, 0x28, 0x4c, 0x7d, 0x88, 0xb9, 0xdd, 0xec
     };
 
-    // Combination
-    u8 safe256AComplete[] =
-    {
+    // Combination of both
+    u8 safe256AComplete[] = {
         0x07, 0x36, 0x52, 0x63, 0x96, 0xa7, 0xc3, 0xf2,
         0x19, 0x28, 0x4c, 0x7d, 0x88, 0xb9, 0xdd, 0xec
     };
 
-    class PasteCharClass
-    {
+    class PasteCharClass {
         public:
             PasteCharClass() = default;
-            std::string operator()()
-            {
+            std::string operator()() {
                 std::string tmp = this->sstream.str();
                 this->sstream.str("");
                 return tmp;
             }
 
             template<typename T, typename... Types>
-            std::string operator()(T var, Types... args)
-            {
+            std::string operator()(T var, Types... args) {
                 this->sstream << var;
                 return this->operator()(args...);
             }
         private:
             std::stringstream sstream;
     };
-
     PasteCharClass pasteChr;
 
     template<class chars, class traits>
-    std::basic_ostream<chars, traits>& base16(std::basic_ostream< chars, traits >& os)
-    {
+    std::basic_ostream<chars, traits>& base16(std::basic_ostream< chars, traits >& os) {
         os << std::setfill('0') << std::setw(2) << std::right << std::hex;
         return os;
     }
 
     template<class chars, class traits>
-    std::basic_ostream<chars, traits>& base10(std::basic_ostream< chars, traits >& os)
-    {
+    std::basic_ostream<chars, traits>& base10(std::basic_ostream< chars, traits >& os) {
         os << std::setfill('0') << std::setw(2) << std::right << std::dec;
         return os;
     }
 
-    bool isWithin(u8 array[32], u8 set[], int size)
-    {
+    /**
+     * Check whether all the elements of array are present in set or not.
+     *
+     * @param array The first array
+     * @param set The second array
+     * @param size The size of set,
+     */
+    bool isWithin(u8 array[32], u8 set[], int size) {
         bool within = false;
-        for(int i = 0; i < 32; i++)
-        {
+        for(int i = 0; i < 32; i++) {
             within = false;
-            for(int j = 0; j < size; j++)
-            {
-                if(array[i] == set[j])
-                {
+            for(int j = 0; j < size; j++) {
+                if(array[i] == set[j]) {
                    within = true;
                    break;
                 }
@@ -457,31 +437,26 @@ namespace utl
     }
 
     template<typename T, size_t size = 32>
-    void arrCopy(T source[size], T destination[size])
-    {
+    void arrCopy(T source[size], T destination[size]) {
         std::copy(source, source + size, destination);
     }
 
     template<typename T, typename ... Args, size_t size = 32>
-    void arrCopy(T source[size], T destination[size], Args... args)
-    {
+    void arrCopy(T source[size], T destination[size], Args... args) {
         std::copy(source, source + size, destination);
         arrCopy(source, args...);
     }
-    
-    void arrZero(u8 arr[32])
-    {
+
+    void arrZero(u8 arr[32]) {
         for(u8 j = 0; j < 32; j++)
             arr[j] = 0;
     }
 
-    std::string pasteVec(std::vector<int>& vector)
-    {
+    std::string pasteVec(std::vector<int>& vector) {
         std::stringstream vector_string;
         const char* del = ",";
         vector_string << '{';
-        if(!vector.empty())
-        {
+        if(!vector.empty()) {
             std::copy(vector.begin(), vector.end() - 1, std::ostream_iterator<int>(vector_string, del));
             vector_string << vector.back();
         }
@@ -489,28 +464,24 @@ namespace utl
         return vector_string.str();
     }
 
-    std::vector<int> vectorXor(std::vector<int>& vector1, std::vector<int>& vector2, std::vector<int>& noop_return, int& noop)
-    {
-        if(!noop)
-            return noop_return;
+    std::vector<int> vectorXor(std::vector<int>& vector1, std::vector<int>& vector2, std::vector<int>& noop_return, int& noop) {
+      if(!noop)
+          return noop_return;
     	std::vector<int> res;
     	for(size_t i = 0; i < vector1.size(); ++i)
     		res.push_back(vector1[i] ^ vector2[i]);
     	return res;
     };
 
-    std::string pasteMat(matrix& matrix)
-    {
+    std::string pasteMat(matrix& matrix) {
         std::stringstream matrix_string;
         for(size_t i = 0; i < matrix.size(); i++)
             matrix_string << pasteVec(matrix[i]) << ',' << std::endl;
         return matrix_string.str();
     }
 
-    void fillMatrix(matrix& matrix1, int (*set)(int, int, matrix))
-    {
-        for(size_t i = 0; i < 32; i++)
-        {
+    void fillMatrix(matrix& matrix1, int (*set)(int, int, matrix)) {
+        for(size_t i = 0; i < 32; i++) {
             std::vector<int> row;
             for(size_t j = 0; j < 32; j++)
                 row.push_back(set(i, j, {}));
@@ -518,8 +489,7 @@ namespace utl
         }
     }
 
-    std::string pasteArr(u8* array, size_t length = 32)
-    {
+    std::string pasteArr(u8* array, size_t length = 32) {
         std::stringstream array_string;
         array_string << "0x" << ' ';
         for(size_t i = 0; i < length; i++)
@@ -527,19 +497,16 @@ namespace utl
         return array_string.str();
     }
 
-    std::string pasteArrChr(u8* array, size_t length = 32)
-    {
+    std::string pasteArrChr(u8* array, size_t length = 32) {
         std::stringstream array_string;
         for(size_t i = 0; i < length; i++)
             array_string << (char) array[i];
         return array_string.str();
     }
 
-    std::string pasteArr(bool* array, int size = 8)
-    {
+    std::string pasteArr(bool* array, int size = 8) {
         std::stringstream binary_string;
-        for(size_t i = size - 1; ; --i)
-        {
+        for(size_t i = size - 1; ; --i) {
             binary_string << array[i];
             if(!i)
                 break;
@@ -547,28 +514,24 @@ namespace utl
         return binary_string.str();
     }
 
-    bool* toBin(u8 var)
-    {
+    bool* toBin(u8 var) {
         bool* binary = new bool[8];
         for(int n = 0; n < 8; ++n)
             binary[n] = (var >> n) & 1;
         return binary;
     }
 
-    void printBin(u8& var)
-    {
+    void printBin(u8& var) {
         std::cout << std::bitset<8>((int) var).to_string() << std::endl;
     }
 
     template<class ... Args>
-    void printBin(u8& var, Args... args)
-    {
+    void printBin(u8& var, Args... args) {
         std::cout << std::bitset<8>((int) var).to_string() << std::endl;
         printBin(args...);
     }
 
-    void printU8Array(char arr[16])
-    {
+    void printU8Array(char arr[16]) {
         for(int i = 0; i < 16; i++)
             std::cout << "0x" << base16 << (int) arr[i] << ',' << ' ';
         std::cout << std::endl;
