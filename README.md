@@ -3,7 +3,7 @@
 >“Crypto is like catnip for programmers. It’s hard to keep us away from it, because it’s challenging and fun to play with. And programmers respond very badly to the insinuation that they’re not clever enough to do something.”—Maciej Cegłowski
 
 My algorithm cracks [NERD HireMe](https://www.nerd.nintendo.com/files/HireMe) for any output within 1 Second! Read more if you want to find out how this was accomplished or execute this algorithm yourself on [Wandbox](https://wandbox.org/) - Online C++ Compiler
-## Solution
+## Summary
   1. Seperate the algorithm into parts: S-Box, XOR-Matrix, Odd-Even-Merge
   2. Create Reverse Lookup for the S-box
   3. Inverse the Square-Matrix with [Gaussian elimination](https://en.wikipedia.org/wiki/Gaussian_elimination)
