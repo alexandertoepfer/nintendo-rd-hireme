@@ -12,6 +12,7 @@ My algorithm cracks [NERD HireMe](https://www.nerd.nintendo.com/files/HireMe) fo
   6. Span a subset of values that are not affected by the XOR-Matrix
   7. Alter the Reverse Lookup to guarantee staying within the subset in an arbitrary amount of reverse lookups
   8. Narrow it down to values that are also not affected by a combination of inverse matrix and reverse lookup
+  9. Copyright
 
 ### 1. Seperate the algorithm into parts
 #### S-box
@@ -231,5 +232,5 @@ for(int i = 0; i < 64; i++) {
 ```
 Run the algorithm to find save values on the altered reverse lookup, the result is a small vector of **16 byte**, there can still be optimizations made regarding the reverse lookup as using the **512 byte** confusion to generate the reverse lookup gives a larger set of **24 byte** but the pairs of **16 byte** are already enough.
 
-## Copyright and license
+### Copyright and license
 Code and documentation copyright 2021 Alexander Töpfer. Code released under the MIT License
