@@ -90,7 +90,7 @@ matrix gaussian_grid = {
     ...
 };
 ```
-![](https://latex.codecogs.com/png.latex?%5Cdpi%7B0%7D%20%5Cbg_white%20M%20%5Cotimes%20I%20%3D%20%20%5Cbegin%7Bpmatrix%7D%20a_%7B1%2C1%7D%20%26%20a_%7B1%2C2%7D%20%26%20...%20%26%20a_%7B1%2C32%7D%20%5C%5C%20a_%7B2%2C1%7D%20%26%20a_%7B2%2C2%7D%20%26%20...%20%26%20a_%7B2%2C%2032%7D%20%5C%5C%20...%20%26%20...%20%26%20...%20%26%20...%20%5C%5C%20a_%7B32%2C1%7D%20%26%20a_%7B32%2C2%7D%20%26%20...%20%26%20a_%7B32%2C32%7D%20%5Cend%7Bpmatrix%7D%20%5Cotimes%20%20%5Cbegin%7Bpmatrix%7D%20i_%7B1%7D%20%5C%5C%20i_%7B2%7D%20%5C%5C%20...%20%5C%5C%20i_%7B32%7D%20%5Cend%7Bpmatrix%7D%20)
+![](https://latex.codecogs.com/png.latex?M%5Cotimes%20I%3D%5Cbegin%7Bpmatrix%7Da_%7B1%2C1%7D%26a_%7B1%2C2%7D%26...%26a_%7B1%2C32%7D%5C%5Ca_%7B2%2C1%7D%26a_%7B2%2C2%7D%26...%26a_%7B2%2C32%7D%5C%5C...%26...%26...%26...%5C%5Ca_%7B32%2C1%7D%26a_%7B32%2C2%7D%26...%26a_%7B32%2C32%7D%5Cend%7Bpmatrix%7D%5Cotimes%5Cbegin%7Bpmatrix%7Di_%7B1%7D%5C%5Ci_%7B2%7D%5C%5C...%5C%5Ci_%7B32%7D%5Cend%7Bpmatrix%7D)
 
 Now all that's left to do is inverse it to satisfy **M * M^(-1) = I**, which can be accomplished by multiple methods of choice, you could also make use of the equation system and plug it into Z3, but none of that is required as applying it twice also works.
 
